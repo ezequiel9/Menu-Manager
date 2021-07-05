@@ -44,3 +44,19 @@ Route::group(['middleware' => 'guest:api'], function () {
     Route::post('oauth/{driver}', [OAuthController::class, 'redirect']);
     Route::get('oauth/{driver}/callback', [OAuthController::class, 'handleCallback'])->name('oauth.callback');
 });
+
+Route::get('users', [\App\Http\Controllers\Auth\UserController::class, 'getUsers']);
+Route::post('add-user', [\App\Http\Controllers\Auth\UserController::class, 'addUser']);
+
+Route::post('search', [\App\Http\Controllers\MenuController::class, 'search']);
+Route::get('dates', [\App\Http\Controllers\MenuController::class, 'getDates']);
+Route::post('menu/add-variation', [\App\Http\Controllers\MenuController::class, 'addVariation']);
+Route::get('menu-types', [\App\Http\Controllers\MenuController::class, 'getMenuTypes']);
+Route::post('menu', [\App\Http\Controllers\MenuController::class, 'addMenu']);
+Route::delete('menu/{menu}', [\App\Http\Controllers\MenuController::class, 'deleteMenu']);
+Route::delete('menu/{menu}/variation/{menu_variation}', [\App\Http\Controllers\MenuController::class, 'deleteVariation']);
+
+
+Route::post('orders', [\App\Http\Controllers\OrderController::class, 'storeOrder']);
+Route::delete('orders/{order}', [\App\Http\Controllers\OrderController::class, 'deleteOrder']);
+Route::get('orders/user/{user_id}/week_number/{week_number}', [\App\Http\Controllers\OrderController::class, 'getOrders']);

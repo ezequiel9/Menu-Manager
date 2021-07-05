@@ -11,6 +11,7 @@ module.exports = {
     'standard'
   ],
   rules: {
-    'vue/max-attributes-per-line': 'off'
+    'vue/max-attributes-per-line': 'off',
+    indent: ['error', 4, { SwitchCase: 1 }]
   }
 }

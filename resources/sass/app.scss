@@ -1,6 +1,7 @@
 @import 'variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~sweetalert2/src/sweetalert2';
+@import '~vue-multiselect/dist/vue-multiselect.min.css';
 
 @import 'elements/card';
 @import 'elements/navbar';
@@ -8,3 +9,14 @@
 @import 'elements/transitions';
 
 @import 'components/server-error';
+
+
+input.form-control {
+    border-radius: 5px;
+    border-color: #e8e8e8;
+    height: 40px;
+}
+
+th.actions, td.actions {
+    text-align: right;
+}
