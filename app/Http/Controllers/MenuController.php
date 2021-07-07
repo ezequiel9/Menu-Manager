@@ -83,8 +83,8 @@ class MenuController extends Controller
         $carbon = Carbon::now()->startOfWeek()->subWeek();
         $dates = [];
         foreach (range(0,6) as $item) {
-            $start = $carbon->format('d/m/Y');
-            $end = $carbon->copy()->endOfWeek()->format('d/m/Y');
+            $start = $carbon->format('d F');
+            $end = $carbon->copy()->endOfWeek()->format('d F');
             $dates[] = [
                 'week_number' => $carbon->week,
                 'week_days' => [

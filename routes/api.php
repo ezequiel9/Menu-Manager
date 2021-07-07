@@ -58,5 +58,6 @@ Route::delete('menu/{menu}/variation/{menu_variation}', [\App\Http\Controllers\M
 
 
 Route::post('orders', [\App\Http\Controllers\OrderController::class, 'storeOrder']);
+Route::get('order-types', [\App\Http\Controllers\OrderController::class, 'getOrderTypes']);
 Route::delete('orders/{order}', [\App\Http\Controllers\OrderController::class, 'deleteOrder']);
 Route::get('orders/user/{user_id}/week_number/{week_number}', [\App\Http\Controllers\OrderController::class, 'getOrders']);

@@ -4,7 +4,7 @@
             <card :title="$t('Search Menu')">
                 <div class="row">
 
-                    <div class="col-8">
+                    <div class="col-6">
                         <div class="input-group mb-3">
                             <multiselect
                                 v-model="user"
@@ -16,7 +16,7 @@
                             ></multiselect>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         <div class="input-group mb-3">
                             <multiselect
                                 v-model="date"
@@ -27,6 +27,14 @@
                                 placeholder="Select week range"
                             ></multiselect>
                         </div>
+                    </div>
+
+                    <div class="col-3">
+                        <multiselect
+                            v-model="day"
+                            :options="week_days"
+                            placeholder="Select day"
+                        ></multiselect>
                     </div>
 
                     <div class="col-9">
@@ -44,9 +52,11 @@
                     </div>
                     <div class="col-3">
                         <multiselect
-                            v-model="day"
-                            :options="week_days"
-                            placeholder="Select day"
+                            v-model="order_type"
+                            :options="order_types"
+                            label="name"
+                            track-by="id"
+                            placeholder="Select Order Type"
                         ></multiselect>
                     </div>
 
@@ -116,6 +126,7 @@
                         <template v-if="orders.filter((order) => { return order.week_day === day && order.user_id === user.id}).length">
                             <div v-for="day_order in orders.filter((order) => { return order.week_day === day && order.user_id === user.id })">
                                 <span @click="deleteOrder(day_order.id)" class="text-danger"><fa icon="trash-alt" fixed-width/></span>
+                                <strong>[{{day_order.order_type.name}}]</strong>
                                 {{day_order.menu.menu_type.name}} - {{day_order.menu.name}}
                                 <span v-if="day_order.menu_variation">, {{day_order.menu_variation.details}}</span>
                             </div>
@@ -226,6 +237,7 @@
             this.getUsers();
             this.getDates();
             this.getMenuTypes();
+            this.getOrderTypes();
         },
 
         data() {
@@ -250,6 +262,8 @@
                 day: null,
                 orders: [],
                 menu_types: [],
+                order_type: null,
+                order_types: [],
                 add_resident: {
                     name: null,
                     phone: null,
@@ -266,11 +280,19 @@
 
         computed: {
             canOrder() {
-                return this.user && this.date && this.day
+                return this.user && this.date && this.day && this.order_type
             },
         },
 
         methods: {
+            async getOrderTypes () {
+                try {
+                    const {data} = await axios.get('/api/order-types')
+                    this.order_types = data
+                } catch (e) {
+
+                }
+            },
             async getMenuTypes () {
                 try {
                     const {data} = await axios.get('/api/menu-types')
@@ -278,7 +300,6 @@
                 } catch (e) {
 
                 }
-
             },
             async getUsers () {
                 try {
@@ -324,8 +345,8 @@
                     'menu_variation_id': menu_variation_id,
                     'user_id': this.user.id,
                     'week_number': this.date.week_number,
+                    'order_type_id': this.order_type.id,
                     'week_day': this.day,
-
                 }
 
                 try {
@@ -333,6 +354,14 @@
                     this.orders = data.orders
                 } catch (e) {
                     console.error(e)
+                    await Swal.fire({
+                        title: 'Ups, you are missing some data',
+                        text: "Please fill all the fields to can submit this form!.",
+                        icon: 'warning',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Got it'
+                    })
                 }
 
             },
@@ -495,8 +524,14 @@
                 }
             },
 
-            printForRooms () {},
-            printForChef () {},
+            printForRooms () {
+                let getUrl = window.location;
+                window.open(getUrl .protocol + "//" + getUrl.host  + '/orders/pdf/residents/' + this.date.week_number, '_blank');
+            },
+            printForChef () {
+                let getUrl = window.location;
+                window.open(getUrl .protocol + "//" + getUrl.host  + '/orders/pdf/chef/' + this.date.week_number, '_blank');
+            },
         },
 
         watch: {

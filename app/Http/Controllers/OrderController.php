@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Models\Order;
+use App\Models\OrderType;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use PDF;
 
 class OrderController extends Controller
 {
@@ -18,6 +20,7 @@ class OrderController extends Controller
             'week_number' => 'required|integer',
             'week_day' => 'required|string',
             'menu_id' => 'required|integer|exists:menus,id',
+            'order_type_id' => 'required|integer|exists:order_types,id',
             'menu_variation_id' => 'nullable|integer|exists:menu_variations,id',
         ]);
 
@@ -30,7 +33,8 @@ class OrderController extends Controller
             ->where('week_number', $request->week_number)
             ->with([
                 'menu.menuType',
-                'menuVariation'
+                'menuVariation',
+                'orderType'
             ])
             ->get();
 
@@ -48,7 +52,8 @@ class OrderController extends Controller
             ->where('week_number', $week_number)
             ->with([
                 'menu.menuType',
-                'menuVariation'
+                'menuVariation',
+                'orderType'
             ])
             ->get();
 
@@ -65,6 +70,66 @@ class OrderController extends Controller
             return response()->json($e->getMessage(), 500);
         }
         return response()->json(true, 200);
+    }
+
+
+    public function getOrderTypes(Request $request)
+    {
+        return response()->json(OrderType::all(), 200);
+    }
+
+    public function pdfChef(Request $request, $week_number)
+    {
+        if (!$week_number) {
+            die('nah.. please add a week number');
+        }
+        $week_number = filter_var($week_number, FILTER_SANITIZE_NUMBER_INT);
+
+        $orders = Order::query()
+            ->where('week_number', $week_number)
+            ->with([
+                'user',
+                'orderType',
+                'menu.menuType',
+                'menuVariation',
+            ])
+            ->get()
+            ->groupBy('user_id');
+
+        //return view('pdf.chef', compact('orders'));
+
+        $week = Carbon::now();
+        $week->setISODate(date('Y'), $week_number);
+
+        $pdf = PDF::loadView('pdf.chef', compact('orders', 'week'));
+        return $pdf->stream();
+        return $pdf->download('menus-chef.pdf');
+    }
+
+    public function pdfResidents(Request $request, $week_number)
+    {
+        if (!$week_number) {
+            die('nah.. please add a week number');
+        }
+        $week_number = filter_var($week_number, FILTER_SANITIZE_NUMBER_INT);
+
+        $orders = Order::query()
+            ->where('week_number', $week_number)
+            ->with([
+                'user',
+                'orderType',
+                'menu.menuType',
+                'menuVariation',
+            ])
+            ->get()
+            ->groupBy('user_id');
+
+        $week = Carbon::now();
+        $week->setISODate(date('Y'), $week_number);
+
+        $pdf = PDF::loadView('pdf.residents', compact('orders', 'week'));
+        return $pdf->stream();
+        return $pdf->download('menus-residents.pdf');
     }
 
 }

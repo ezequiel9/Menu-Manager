@@ -37,11 +37,18 @@ class AddMenusTable extends Migration
 
             $table->foreign('menu_id')->references('id')->on('menus')->onDelete('cascade');;
         });
+        Schema::create('order_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->softDeletes();
+            $table->timestamps();
+        });
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('menu_id');
             $table->unsignedBigInteger('menu_variation_id')->nullable();
+            $table->unsignedBigInteger('order_type_id')->nullable();
             $table->string('week_number');
             $table->string('week_day');
             $table->string('note')->nullable();
@@ -50,6 +57,7 @@ class AddMenusTable extends Migration
 
             $table->foreign('menu_id')->references('id')->on('menus');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('order_type_id')->references('id')->on('order_types');
             $table->foreign('menu_variation_id')->references('id')->on('menu_variations')->onDelete('cascade');
         });
 

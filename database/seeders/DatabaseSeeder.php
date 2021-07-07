@@ -27,15 +27,8 @@ class DatabaseSeeder extends Seeder
         Schema::disableForeignKeyConstraints();
         MenuVariation::query()->truncate();
         Menu::query()->truncate();
-        MenuType::query()->truncate();
         User::query()->truncate();
         Schema::enableForeignKeyConstraints();
-
-        MenuType::query()->create(['name' => 'Main']);
-        MenuType::query()->create(['name' => 'Sides']);
-        MenuType::query()->create(['name' => 'Dessert']);
-        MenuType::query()->create(['name' => 'Breakfast']);
-        MenuType::query()->create(['name' => 'Afternoon Tea']);
 
         foreach (range(0,30) as $item) {
             $menu = Menu::query()

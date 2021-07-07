@@ -12,6 +12,7 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'menu_id',
+        'order_type_id',
         'menu_variation_id',
         'week_number',
         'week_day',
@@ -40,6 +41,14 @@ class Order extends Model
     public function menuVariation()
     {
         return $this->belongsTo(MenuVariation::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function orderType()
+    {
+        return $this->belongsTo(OrderType::class);
     }
 
 

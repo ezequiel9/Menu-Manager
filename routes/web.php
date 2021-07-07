@@ -13,6 +13,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/welcome', function () {
-//     return view('welcome');
-// });
+Route::get('orders/pdf/chef/{week_number}', [\App\Http\Controllers\OrderController::class, 'pdfChef']);
+Route::get('orders/pdf/residents/{week_number}', [\App\Http\Controllers\OrderController::class, 'pdfResidents']);
