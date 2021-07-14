@@ -42,7 +42,7 @@ class UserController extends Controller
             'phone' => 'nullable|string',
             'room_number' => 'required|string',
             'diet' => 'nullable|string',
-            'floor' => 'nullable|string'
+            'floor_id' => 'nullable|integer|exists:floors,id'
         ]);
         if (empty($request->email)) {
             $request->email = Str::slug($request->name).$request->room_number.'@menu.com';

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Floor;
 use App\Models\Menu;
 use App\Models\MenuType;
 use App\Models\MenuVariation;
@@ -104,4 +105,9 @@ class MenuController extends Controller
         return response()->json($dates, 200);
     }
 
+
+    public function getFloors(Request $request)
+    {
+        return response()->json(Floor::all(), 200);
+    }
 }

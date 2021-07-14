@@ -205,14 +205,12 @@
                     >
                 </div>
                 <div class="input-group mb-3">
-                    <input
-                        type="text"
-                        class="form-control"
-                        placeholder="Floor. eg: Level 1"
-                        aria-label="Floor"
-                        aria-describedby="floor"
-                        v-model="add_resident.floor"
-                    >
+                    <select class="custom-select" v-model="add_resident.floor_id">
+                        <option selected>Select Floor</option>
+                        <template v-for="floor in floors">
+                            <option :value="floor.id">{{floor.name}}</option>
+                        </template>
+                    </select>
                 </div>
                 <button class="btn btn-success" @click="addResident()" type="button">Add Resident</button>
             </card>
@@ -258,6 +256,7 @@
             this.getDates();
             this.getMenuTypes();
             this.getOrderTypes();
+            this.getFloors();
         },
 
         data() {
@@ -282,6 +281,7 @@
                 day: null,
                 orders: [],
                 menu_types: [],
+                floors: [],
                 order_type: null,
                 order_types: [],
                 add_resident: {
@@ -291,7 +291,7 @@
                     email: null,
                     meal_size: null,
                     diet: null,
-                    floor: null
+                    floor_id: null
                 },
                 add_menu: {
                     name: null,
@@ -307,6 +307,14 @@
         },
 
         methods: {
+            async getFloors () {
+                try {
+                    const {data} = await axios.get('/api/floors')
+                    this.floors = data
+                } catch (e) {
+
+                }
+            },
             async getOrderTypes () {
                 try {
                     const {data} = await axios.get('/api/order-types')

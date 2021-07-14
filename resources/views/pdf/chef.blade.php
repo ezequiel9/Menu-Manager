@@ -27,6 +27,9 @@
         .page-break {
             page-break-after: always;
         }
+
+        tr:nth-child(even) {background: #f1f1f1}
+        tr:nth-child(odd) {background: #FFF}
     </style>
 </head>
 <body>
@@ -58,65 +61,89 @@
             @endphp
             @foreach($orders_grouped_by_type as $order_type_id => $orders_in_type)
                 @php
-                    $title = $order_types->where('id', $order_type_id)->first();
+                    $order_type = $order_types->where('id', $order_type_id)->first();
                     $users_orders = $orders_in_type->groupBy('user_id');
                     //dd($users_orders);
                 @endphp
 
                 <tr>
-                    <td colspan="6" style="text-align: center; font-weight: bold; text-transform: uppercase;">{{$week_day}} {{$title->name}}</td>
+                    <td colspan="6" style="text-align: center; font-weight: bold; text-transform: uppercase; background: rgba(0, 90, 255, .36);">
+                        {{$week_day}} {{$order_type->name}}
+                    </td>
                 </tr>
 
                 @foreach($users_orders as $user_orders)
-                    @if($user_orders->isNotEmpty())
+
+                    @php
+                        $users_orders_grouped_by_floor = $user_orders->groupBy('user.floor_id');
+                    @endphp
+
+                    @foreach($users_orders_grouped_by_floor as $floor_id => $user_orders_grouped_by_floor)
+
                         @php
-                            $unique_user_order = $user_orders->first();
-                            $soup = '';
-                            $main = '';
-                            $dessert = '';
-                            foreach ($user_orders as $order) {
-                                $details = $order->menuVariation ? $order->menuVariation->details : '';
-                                if ($order->menu->menuType->name == 'Soup') {
-                                    $soup = $order->menu->name . ' ' . $details;
-                                }
-                                if ($order->menu->menuType->name == 'Main') {
-                                    $main = $order->menu->name . ' ' . $details;
-                                }
-                                if ($order->menu->menuType->name == 'Dessert') {
-                                    $dessert = $order->menu->name . ' ' . $details;
-                                }
-                            }
+                            $floor = $floors->where('id', $floor_id)->first();
                         @endphp
 
-                        <tr style="border-bottom: 1px solid #ccc;">
-                            <td>
-                                {{ $unique_user_order->user->room_number }}
-                            </td>
-                            <td style="border-bottom: 1px solid #ccc;">
-                                {{ $unique_user_order->user->name }}
-                                @if($unique_user_order->user->diet)
-                                    <span style="color: red; font-weight: bold">({{ $unique_user_order->user->diet }})</span>
-                                @endif
-                            </td>
-                            <td style="border-bottom: 1px solid #ccc;">{{ $unique_user_order->user->meal_size }}</td>
-                            <td style="border-bottom: 1px solid #ccc;">
-                                {{$soup}}
-                            </td>
-                            <td style="border-bottom: 1px solid #ccc;">
-                                {{$main}}
-                            </td>
-                            <td style="border-bottom: 1px solid #ccc;">
-                                {{$dessert}}
+                        <tr>
+                            <td colspan="6" style="text-align: center; font-weight: bold; text-transform: uppercase; background: #f9f907">
+                                {{$floor->name ?? 'No Floor'}}
                             </td>
                         </tr>
-                    @endif
+
+                        @if($user_orders_grouped_by_floor->isNotEmpty())
+                            @php
+                                $unique_user_order = $user_orders_grouped_by_floor->first();
+                                $side = '';
+                                $main = '';
+                                $dessert = '';
+                                foreach ($user_orders_grouped_by_floor as $order) {
+                                    $details = $order->menuVariation ? $order->menuVariation->details : '';
+                                    if (in_array($order->menu->menuType->name, ['Soup', 'Drinks'])) {
+                                        $side = $order->menu->name . ' ' . $details;
+                                    }
+                                    if ($order->menu->menuType->name == 'Main') {
+                                        $main = $order->menu->name . ' ' . $details;
+                                    }
+                                    if ($order->menu->menuType->name == 'Dessert') {
+                                        $dessert = $order->menu->name . ' ' . $details;
+                                    }
+                                }
+                            @endphp
+
+                            <tr style="border-bottom: 1px solid #ccc;">
+                                <td>
+                                    {{ $unique_user_order->user->room_number }}
+                                </td>
+                                <td style="border-bottom: 1px solid #ccc;">
+                                    {{ $unique_user_order->user->name }}
+                                    @if($unique_user_order->user->diet)
+                                        <span style="color: red; font-weight: bold">({{ $unique_user_order->user->diet }})</span>
+                                    @endif
+                                </td>
+                                <td style="border-bottom: 1px solid #ccc;">{{ $unique_user_order->user->meal_size }}</td>
+                                <td style="border-bottom: 1px solid #ccc;">
+                                    {{$side}}
+                                </td>
+                                <td style="border-bottom: 1px solid #ccc;">
+                                    {{$main}}
+                                </td>
+                                <td style="border-bottom: 1px solid #ccc;">
+                                    {{$dessert}}
+                                </td>
+                            </tr>
+                        @endif
+
+                    @endforeach
+
                 @endforeach
 
             @endforeach
 
 
-            <tr>
-                <td colspan="6"></td>
+            <tr style="page-break-after: always;">
+                <td colspan="6">
+
+                </td>
             </tr>
 
         @endforeach

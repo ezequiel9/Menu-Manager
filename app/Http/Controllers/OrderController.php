@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Floor;
 use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderType;
@@ -100,10 +101,11 @@ class OrderController extends Controller
         $week->setISODate(date('Y'), $week_number);
 
         $order_types = OrderType::all();
+        $floors = Floor::all();
 
-        //return view('pdf.chef', compact('orders', 'week', 'order_types'));
+        return view('pdf.chef', compact('orders', 'week', 'order_types', 'floors'));
 
-        $pdf = PDF::loadView('pdf.chef', compact('orders', 'week', 'order_types'));
+        $pdf = PDF::loadView('pdf.chef', compact('orders', 'week', 'order_types', 'floors'));
         return $pdf->stream();
         return $pdf->download('menus-chef.pdf');
     }

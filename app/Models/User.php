@@ -28,7 +28,7 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
         'phone',
         'meal_size',
         'diet',
-        'floor'
+        'floor_id'
     ];
 
     /**
@@ -117,5 +117,13 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function floor()
+    {
+        return $this->belongsTo(Floor::class);
     }
 }
