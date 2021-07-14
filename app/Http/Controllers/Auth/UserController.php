@@ -39,8 +39,10 @@ class UserController extends Controller
             'name' => 'required|string',
             'email' => 'nullable|string',
             'meal_size' => 'required|string',
-            'phone' => 'required|string',
+            'phone' => 'nullable|string',
             'room_number' => 'required|string',
+            'diet' => 'nullable|string',
+            'floor' => 'nullable|string'
         ]);
         if (empty($request->email)) {
             $request->email = Str::slug($request->name).$request->room_number.'@menu.com';

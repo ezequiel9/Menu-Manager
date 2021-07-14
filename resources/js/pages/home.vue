@@ -194,6 +194,26 @@
                         v-model="add_resident.meal_size"
                     >
                 </div>
+                <div class="input-group mb-3">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Diet Type"
+                        aria-label="Diet Type"
+                        aria-describedby="diet-type"
+                        v-model="add_resident.diet"
+                    >
+                </div>
+                <div class="input-group mb-3">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Floor. eg: Level 1"
+                        aria-label="Floor"
+                        aria-describedby="floor"
+                        v-model="add_resident.floor"
+                    >
+                </div>
                 <button class="btn btn-success" @click="addResident()" type="button">Add Resident</button>
             </card>
             <card class="mt-3" :title="$t('Add Menu')">
@@ -269,7 +289,9 @@
                     phone: null,
                     room_number: null,
                     email: null,
-                    meal_size: null
+                    meal_size: null,
+                    diet: null,
+                    floor: null
                 },
                 add_menu: {
                     name: null,
@@ -332,7 +354,8 @@
             },
 
             customLabelUser (user) {
-                return `${user.name} | Room ${user.room_number}`
+                const diet = user.diet ? ` (${user.diet})` : ''
+                return `${user.name}${diet} | Room ${user.room_number}`
             },
 
             customLabelDate (date) {

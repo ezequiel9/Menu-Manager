@@ -94,14 +94,16 @@ class OrderController extends Controller
                 'menuVariation',
             ])
             ->get()
-            ->groupBy('user_id');
-
-        //return view('pdf.chef', compact('orders'));
+            ->groupBy('week_day');
 
         $week = Carbon::now();
         $week->setISODate(date('Y'), $week_number);
 
-        $pdf = PDF::loadView('pdf.chef', compact('orders', 'week'));
+        $order_types = OrderType::all();
+
+        //return view('pdf.chef', compact('orders', 'week', 'order_types'));
+
+        $pdf = PDF::loadView('pdf.chef', compact('orders', 'week', 'order_types'));
         return $pdf->stream();
         return $pdf->download('menus-chef.pdf');
     }
