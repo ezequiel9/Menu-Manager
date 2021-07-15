@@ -88,6 +88,7 @@ class OrderController extends Controller
 
         $orders = Order::query()
             ->where('week_number', $week_number)
+            ->whereHas('user')
             ->with([
                 'user',
                 'orderType',
@@ -131,7 +132,13 @@ class OrderController extends Controller
         $week = Carbon::now();
         $week->setISODate(date('Y'), $week_number);
 
-        $pdf = PDF::loadView('pdf.residents', compact('orders', 'week'));
+        $order_types = OrderType::all();
+        $floors = Floor::all();
+
+        //return view('pdf.residents', compact('orders', 'week', 'order_types', 'floors'));
+
+
+        $pdf = PDF::loadView('pdf.residents', compact('orders', 'week', 'order_types', 'floors'));
         return $pdf->stream();
         return $pdf->download('menus-residents.pdf');
     }

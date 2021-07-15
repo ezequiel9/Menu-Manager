@@ -5,7 +5,8 @@
     <title>Menus</title>
     <style>
         body {
-            font-family: 'Helvetica';
+            font-family: 'Arial Black';
+            font-size: 18px;
         }
         h5 {
             text-transform: uppercase;
@@ -26,49 +27,109 @@
         .page-break {
             page-break-after: always;
         }
+
+        .order-container {
+            display:inline-block;
+            width: 50%;
+        }
     </style>
 </head>
 <body>
 
 
-@foreach ($orders as $user_orders)
+@foreach ($orders as $user_id => $user_orders)
 
-    <div class="page" style="page-break-after: always">
+{{--    @if ($user_id != 6)--}}
+{{--        @continue--}}
+{{--    @endif--}}
 
 
-        @if(!empty($user_orders))
 
+    @if(!empty($user_orders))
+
+        @php
+            $orders_grouped_by_type = $user_orders->groupBy('order_type_id');
+        @endphp
+
+        @foreach($orders_grouped_by_type as $order_type_id => $orders_in_type)
             @php
-                $date_start = $week->startOfWeek()->format('d F');
-                $date_end = $week->endOfWeek()->format('d F');
-
-                $order_by_day = $user_orders->groupBy('week_day');
+                $order_type = $order_types->where('id', $order_type_id)->first();
             @endphp
 
-            <h1 style="text-align: center">{{ $user_orders[0]->user->name }}</h1>
+            <div class="page" style="page-break-after: always">
 
-            <h3 style="text-align: center; text-transform: uppercase;">Week {{$date_start}} - {{$date_end}} | Room {{ $user_orders[0]->user->room_number }}</h3>
+                @php
+                    $date_start = $week->startOfWeek()->format('d F');
+                    $date_end = $week->endOfWeek()->format('d F');
+                    //dd($orders_in_type);
+                    $order_by_day = $orders_in_type->groupBy('week_day');
+                @endphp
 
-            <div style="text-align: center;">
-                @foreach($order_by_day as $day => $day_orders)
-                    <h3>{{$day}}</h3>
-                    @foreach($day_orders as $order)
+                <table>
+                    <tr style="background: #01484d;">
+                        <td>
+                            <div style="padding: 15px;">
+                                <img src="{{public_path('/russley-village-wh.png')}}" alt="" style="max-width: 190px">
+                            </div>
+                        </td>
+                        <td>
+                            <div style="color: white; padding: 15px;text-align: right;">
+                                <h2 style="margin-top: 0;">{{$order_type->name}} Menu</h2>
+                                <h4 style="margin-bottom: 5px; margin-top: 0;">{{ $user_orders[0]->user->name }}</h4>
+                                <div style="font-size: .8em">
+                                    Week {{$date_start}} - {{$date_end}} | Room {{ $user_orders[0]->user->room_number }}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
 
-                        <div class="order-container">
-                            <strong>[{{ $order->orderType->name }}]</strong>
-                            <strong>[{{ $order->menu->menuType->name }}]</strong>
-                            {{ $order->menu->name }} {{ $order->menuVariation->details ?? '' }}
+                <div style="clear: both;"></div>
+
+                <div style="">
+                    @php
+                        $i = 1;
+                        $closed = true;
+                    @endphp
+                    @foreach($order_by_day as $day => $day_orders)
+                        @if($i % 2 !== 0)
+                        @php $closed = false;  @endphp
+                        <div style="display: inline-block; width: 100%">
+                        @endif
+
+                            <div class="day" style="width: 50%; float: left;">
+                                <div style="padding: 15px">
+                                    <h3>{{$day}}</h3>
+                                    @foreach($day_orders as $key => $order)
+                                        <strong>{{ $order->menu->menuType->name }}</strong><br>
+                                        {{ $order->menu->name }}
+                                        {{ $order->menuVariation->details ?? '' }}
+                                        <br>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                        @if($i % 2 === 0)
+                        @php $closed= true; @endphp
                         </div>
-
+                        <div style="clear: both"></div>
+                        @endif
+                        @php
+                            $i++;
+                        @endphp
                     @endforeach
-                @endforeach
+
+                    @if (!$closed)
+                        </div>
+                    @endif
+
+                </div>
+
             </div>
-        @endif
 
+        @endforeach
 
-    </div>
-
-
+    @endif
 @endforeach
 
 </body>

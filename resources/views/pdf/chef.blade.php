@@ -62,8 +62,7 @@
             @foreach($orders_grouped_by_type as $order_type_id => $orders_in_type)
                 @php
                     $order_type = $order_types->where('id', $order_type_id)->first();
-                    $users_orders = $orders_in_type->groupBy('user_id');
-                    //dd($users_orders);
+                    $users_orders = $orders_in_type->groupBy('user.floor_id');
                 @endphp
 
                 <tr>
@@ -72,23 +71,22 @@
                     </td>
                 </tr>
 
-                @foreach($users_orders as $user_orders)
+                @foreach($users_orders as $floor_id => $user_orders)
 
                     @php
-                        $users_orders_grouped_by_floor = $user_orders->groupBy('user.floor_id');
+                        $floor = $floors->where('id', $floor_id)->first();
+                        $users_orders_grouped_by_floor = $user_orders->groupBy('user_id');
                     @endphp
+
+                    <tr>
+                        <td colspan="6" style="text-align: center; font-weight: bold; text-transform: uppercase; background: #f9f907">
+                            {{$floor->name ?? 'No Floor'}}
+                        </td>
+                    </tr>
 
                     @foreach($users_orders_grouped_by_floor as $floor_id => $user_orders_grouped_by_floor)
 
-                        @php
-                            $floor = $floors->where('id', $floor_id)->first();
-                        @endphp
 
-                        <tr>
-                            <td colspan="6" style="text-align: center; font-weight: bold; text-transform: uppercase; background: #f9f907">
-                                {{$floor->name ?? 'No Floor'}}
-                            </td>
-                        </tr>
 
                         @if($user_orders_grouped_by_floor->isNotEmpty())
                             @php
@@ -112,7 +110,7 @@
 
                             <tr style="border-bottom: 1px solid #ccc;">
                                 <td>
-                                    {{ $unique_user_order->user->room_number }}
+                                    {{ $unique_user_order->user->room_number ?? '' }}
                                 </td>
                                 <td style="border-bottom: 1px solid #ccc;">
                                     {{ $unique_user_order->user->name }}
