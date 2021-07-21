@@ -104,7 +104,7 @@ class OrderController extends Controller
         $order_types = OrderType::all();
         $floors = Floor::all();
 
-        return view('pdf.chef', compact('orders', 'week', 'order_types', 'floors'));
+        //return view('pdf.chef', compact('orders', 'week', 'order_types', 'floors'));
 
         $pdf = PDF::loadView('pdf.chef', compact('orders', 'week', 'order_types', 'floors'));
         return $pdf->stream();
