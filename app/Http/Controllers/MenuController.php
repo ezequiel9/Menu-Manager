@@ -87,7 +87,7 @@ class MenuController extends Controller
             $start = $carbon->format('d F');
             $end = $carbon->copy()->endOfWeek()->format('d F');
             $dates[] = [
-                'week_number' => $carbon->week,
+                'week_number' => $carbon->isoWeek,
                 'week_days' => [
                     'Monday',
                     'Tuesday',
@@ -101,7 +101,6 @@ class MenuController extends Controller
             ];
             $carbon->addWeek();
         }
-
         return response()->json($dates, 200);
     }
 
