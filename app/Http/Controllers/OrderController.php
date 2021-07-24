@@ -107,6 +107,7 @@ class OrderController extends Controller
         //return view('pdf.chef', compact('orders', 'week', 'order_types', 'floors'));
 
         $pdf = PDF::loadView('pdf.chef', compact('orders', 'week', 'order_types', 'floors'));
+        //$pdf->setPaper('A4', 'landscape');
         return $pdf->stream();
         return $pdf->download('menus-chef.pdf');
     }

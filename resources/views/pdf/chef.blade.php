@@ -54,15 +54,19 @@
             //dd($orders);
         @endphp
 
-
+        @php
+            $count = $orders->count();
+        @endphp
         @foreach ($orders as $week_day => $day_orders)
             @php
-                $orders_grouped_by_type = $day_orders->groupBy('order_type_id');
+                $count--;
+                $orders_grouped_by_type = $day_orders->groupBy('order_type_id')->sortKeys();
             @endphp
             @foreach($orders_grouped_by_type as $order_type_id => $orders_in_type)
                 @php
                     $order_type = $order_types->where('id', $order_type_id)->first();
-                    $users_orders = $orders_in_type->groupBy('user.floor_id');
+                    $users_orders = $orders_in_type->groupBy('user.floor_id')->sortKeys();
+                    //dd($users_orders);
                 @endphp
 
                 <tr>
@@ -75,7 +79,10 @@
 
                     @php
                         $floor = $floors->where('id', $floor_id)->first();
-                        $users_orders_grouped_by_floor = $user_orders->groupBy('user_id');
+                        $users_orders_grouped_by_floor = $user_orders->groupBy(function($order){
+                            return $order->user->room_number . $order->user_id;
+                        })->sortKeys();
+                        //dd($users_orders_grouped_by_floor);
                     @endphp
 
                     <tr>
@@ -138,12 +145,21 @@
             @endforeach
 
 
-            <tr style="page-break-after: always;">
-                <td colspan="6">
-
-                </td>
-            </tr>
-
+            {{-- Have to break the page every day --}}
+            @if($count)
+            </table>
+            <div style="page-break-after: always;"></div>
+            <h5>Week {{$date_start}} - {{$date_end}}</h5>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Room</th>
+                    <th>Resident</th>
+                    <th>Size</th>
+                    <th>Soup</th>
+                    <th>Main</th>
+                    <th>Dessert</th>
+                </tr>
+            @endif
         @endforeach
     </table>
 

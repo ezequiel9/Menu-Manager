@@ -39,12 +39,6 @@
 
 @foreach ($orders as $user_id => $user_orders)
 
-{{--    @if ($user_id != 6)--}}
-{{--        @continue--}}
-{{--    @endif--}}
-
-
-
     @if(!empty($user_orders))
 
         @php
@@ -98,8 +92,8 @@
                         @endif
 
                             <div class="day" style="width: 50%; float: left;">
-                                <div style="padding: 15px">
-                                    <h3>{{$day}}</h3>
+                                <div style="padding: 5px 15px">
+                                    <h3 style="margin-bottom: 5px">{{$day}}</h3>
                                     @foreach($day_orders as $key => $order)
                                         <strong>{{ $order->menu->menuType->name }}</strong><br>
                                         {{ $order->menu->name }}
