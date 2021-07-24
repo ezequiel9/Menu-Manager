@@ -81,6 +81,7 @@ class OrderController extends Controller
 
     public function pdfChef(Request $request, $week_number)
     {
+        ini_set('max_execution_time', 180); //3 minutes
         if (!$week_number) {
             die('nah.. please add a week number');
         }
@@ -114,6 +115,7 @@ class OrderController extends Controller
 
     public function pdfResidents(Request $request, $week_number)
     {
+        ini_set('max_execution_time', 180); //3 minutes
         if (!$week_number) {
             die('nah.. please add a week number');
         }
