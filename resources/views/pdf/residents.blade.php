@@ -94,7 +94,19 @@
                             <div class="day" style="width: 50%; float: left;">
                                 <div style="padding: 5px 15px">
                                     <h3 style="margin-bottom: 5px">{{$day}}</h3>
-                                    @foreach($day_orders as $key => $order)
+                                    @php
+                                        $menu_types = ['Drinks', 'Soup', 'Main', 'Sides', 'Dessert', 'Other'];
+                                    @endphp
+
+                                    @foreach($menu_types as $menu_type)
+                                        @foreach($day_orders->filter(function ($order) use ($menu_type) { return $order->menu->menuType->name == $menu_type; }) as $key => $order)
+                                            <strong>{{ $order->menu->menuType->name }}</strong><br>
+                                            {{ $order->menu->name }}
+                                            {{ $order->menuVariation->details ?? '' }}
+                                            <br>
+                                        @endforeach
+                                    @endforeach
+                                    @foreach($day_orders->filter(function ($order) use ($menu_types) { return !in_array($order->menu->menuType->name, $menu_types); }) as $key => $order)
                                         <strong>{{ $order->menu->menuType->name }}</strong><br>
                                         {{ $order->menu->name }}
                                         {{ $order->menuVariation->details ?? '' }}
