@@ -101,10 +101,12 @@
                                 $side = '';
                                 $main = '';
                                 $dessert = '';
+                                $sides = [];
                                 foreach ($user_orders_grouped_by_floor as $order) {
                                     $details = $order->menuVariation ? $order->menuVariation->details : '';
+
                                     if (in_array($order->menu->menuType->name, ['Soup', 'Drinks'])) {
-                                        $side = $order->menu->name . ' ' . $details;
+                                        $sides[] = $order->menu->name . ' ' . $details;
                                     }
                                     if ($order->menu->menuType->name == 'Main') {
                                         $main = $order->menu->name . ' ' . $details;
@@ -113,6 +115,7 @@
                                         $dessert = $order->menu->name . ' ' . $details;
                                     }
                                 }
+                                $side = implode(', ', $sides);
                             @endphp
 
                             <tr style="border-bottom: 1px solid #ccc;">
